@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Resort Map</title>
+    <style>
+        /* Style for full-screen map */
+        body, html { margin: 0; padding: 0; height: 100%; }
+        #map { width: 100%; height: 100vh; }
+    </style>
+    <!-- Include Mapbox GL JS library -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.4.1/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.4.1/mapbox-gl.css" rel="stylesheet" />
+</head>
+<body>
+    <!-- Div for the map -->
+    <div id="map"></div>
+
+    <script>
+        // Mapbox access token
+        mapboxgl.accessToken = 'pk.eyJ1IjoiYWxlbmFzZXJnaWVuIiwiYSI6ImNtM2ExZHVycDA1bGQyanF5c3BvOHdxNTYifQ.W6xV3y7qWJTWetlLTaBN6Q';
+
+        // Initialize the Mapbox map
+        const map = new mapboxgl.Map({
+            container: 'map', // ID of the div to display the map in
+            style: 'mapbox://styles/mapbox/light-v10', // Choose a base map style
+            center: [27.3115, 37.1150], // Center point of the map (adjusted for Bodrum Edition)
+            zoom: 17 // Adjust zoom level as needed
+        });
+
+        // Coordinates for the corners of your rotated image overlay
+        const bounds = [
+            [27.31040, 37.11351], // New top-left corner [longitude, latitude]
+            [27.31044, 37.11676], // New top-right corner [longitude, latitude]
+            [27.31271, 37.11677], // New bottom-right corner [longitude, latitude]
+            [27.31262, 37.11348]  // New bottom-left corner [longitude, latitude]
+        ];
+
+        // Add the custom image overlay as a source
+        map.on('load', () => {
+            map.addSource('resortMap', {
+                type: 'image',
+                url: 'https://i.imgur.com/S36xzUR.png', // Direct link to the new Canva map image
+                coordinates: bounds
+            });
+
+            // Add the image overlay as a new layer
+            map.addLayer({
+                id: 'resortMapLayer',
+                type: 'raster',
+                source: 'resortMap',
+                paint: {
+                    'raster-opacity': 0.8 // Adjust transparency as needed
+                }
+            });
+
+            // Optional: Add a control to locate the user's GPS position
+            map.addControl(new mapboxgl.GeolocateControl({
+                positionOptions: { enableHighAccuracy: true },
+                trackUserLocation: true,
+                showUserHeading: true
+            }));
+        });
+    </script>
+</body>
+</html>
